@@ -28,3 +28,14 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+
+feign:
+  client:
+    config:
+      nacos-service:
+        loggerLevel: basic
+        read-timeout: 1000
+
+logging:
+  level:
+    com.wangtao: debug

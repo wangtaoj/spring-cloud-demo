@@ -12,4 +12,7 @@ public interface IInfoService {
 
     @GetMapping("/port")
     Integer port();
+
+    @GetMapping("/retry")
+    Integer retry();
 }

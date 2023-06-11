@@ -39,4 +39,9 @@ public class LoadbalanceController {
             throw new IllegalArgumentException(serviceName);
         }
     }
+
+    @GetMapping("/retry")
+    public Integer retry() {
+        return infoService.retry();
+    }
 }
