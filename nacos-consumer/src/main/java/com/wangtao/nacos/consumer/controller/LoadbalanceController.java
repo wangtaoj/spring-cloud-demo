@@ -55,4 +55,9 @@ public class LoadbalanceController {
     public Integer retry() {
         return infoService.retry();
     }
+
+    @GetMapping("/tryFallback")
+    public String tryFallback(boolean hasExp) {
+        return infoService.mockExp(hasExp);
+    }
 }

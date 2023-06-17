@@ -35,6 +35,8 @@ feign:
       nacos-service:
         loggerLevel: basic
         read-timeout: 1000
+  circuitbreaker:
+    enabled: true
 
 logging:
   level:

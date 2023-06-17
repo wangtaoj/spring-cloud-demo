@@ -40,4 +40,12 @@ public class InfoController {
         }
         return serverProperties.getPort();
     }
+
+    @GetMapping("/mockExp")
+    public String mockExp(boolean hasExp) {
+        if (hasExp) {
+            throw new IllegalArgumentException("mock exception");
+        }
+        return "success";
+    }
 }
