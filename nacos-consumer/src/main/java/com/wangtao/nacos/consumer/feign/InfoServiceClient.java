@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * Created at 2023/6/11 09:13
  */
 @FeignClient(value = "nacos-service", contextId = "nacos-service", path = "/info")
-public interface IInfoService {
+public interface InfoServiceClient {
 
     @GetMapping("/port")
     Integer port();

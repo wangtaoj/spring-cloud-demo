@@ -1,8 +1,10 @@
 package com.wangtao.nacos.consumer.controller;
 
-import com.wangtao.nacos.consumer.feign.IInfoService;
+import com.wangtao.nacos.consumer.feign.InfoServiceClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -21,7 +23,16 @@ public class LoadbalanceController {
     private RestTemplate restTemplate;
 
     @Autowired
-    private IInfoService infoService;
+    private InfoServiceClient infoService;
+
+    @Autowired
+    private LoadBalancerClient loadBalancerClient;
+
+    @GetMapping("/choose")
+    public void choose() {
+        ServiceInstance instance = loadBalancerClient.choose("nacos-service");
+        log.info("host:ip = {}:{}", instance.getHost(), instance.getPort());
+    }
 
     @GetMapping("/port")
     public Integer getPortByServiceName(String serviceName) {
