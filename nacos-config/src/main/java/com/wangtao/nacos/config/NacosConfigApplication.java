@@ -19,6 +19,7 @@ public class NacosConfigApplication {
 
     public static void main(String[] args) throws SQLException {
         ConfigurableApplicationContext ac = SpringApplication.run(NacosConfigApplication.class, args);
+        System.out.println(ac.getParent());
         Environment environment = ac.getEnvironment();
         System.out.println(environment);
         DataSource dataSource = ac.getBean(DataSource.class);

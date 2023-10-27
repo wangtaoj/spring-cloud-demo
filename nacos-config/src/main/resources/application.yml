@@ -2,6 +2,13 @@ server:
   port: 8082
 
 spring:
+  profiles:
+    active: dev
+  application:
+    name: nacos-config
+  config:
+    import: nacos:/nacos-config.yml
+
   datasource:
     url: jdbc:mysql://127.0.0.1/test?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: root
@@ -26,6 +33,9 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
 
 logging:
   level:
