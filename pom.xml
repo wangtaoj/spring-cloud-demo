@@ -12,6 +12,7 @@
     <module>nacos-service</module>
     <module>nacos-consumer</module>
     <module>nacos-config</module>
+    <module>gateway</module>
   </modules>
 
   <properties>

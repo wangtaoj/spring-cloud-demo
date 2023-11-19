@@ -1,0 +1,22 @@
+server:
+  port: 8079
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        register-enabled: false
+    gateway:
+      routes:
+        - id: nacos-service-route
+          # 注意使用lb负载均衡语法，必须有注册中心以及负载均衡模块依赖
+          uri: lb://nacos-service
+          predicates:
+            - Path=/nacos-service/**
+          filters:
+            - RewritePath=/nacos-service/?(?<segment>.*), /$\{segment}
+            # 或者使用下面这个
+            #- StripPrefix=1
