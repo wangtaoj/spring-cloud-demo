@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Objects;
-
 /**
  * @author wangtao
  * Created at 2023/6/11 08:47
@@ -42,13 +40,8 @@ public class LoadbalanceController {
     }
 
     @GetMapping("/port1")
-    public Integer getPortByServiceNameUseFeign(String serviceName) {
-        log.info("serviceName: {}", serviceName);
-        if (Objects.equals(serviceName, "nacos-service")) {
-            return infoService.port();
-        } else {
-            throw new IllegalArgumentException(serviceName);
-        }
+    public Integer getPortByServiceNameUseFeign() {
+        return infoService.port();
     }
 
     @GetMapping("/retry")

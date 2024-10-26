@@ -20,3 +20,10 @@ spring:
             - RewritePath=/nacos-service/?(?<segment>.*), /$\{segment}
             # 或者使用下面这个
             #- StripPrefix=1
+        - id: nacos-consumer-route
+          # 注意使用lb负载均衡语法，必须有注册中心以及负载均衡模块依赖
+          uri: lb://nacos-consumer
+          predicates:
+            - Path=/nacos-consumer/**
+          filters:
+            - StripPrefix=1
