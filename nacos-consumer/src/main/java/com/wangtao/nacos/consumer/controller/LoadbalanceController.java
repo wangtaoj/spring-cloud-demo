@@ -44,11 +44,17 @@ public class LoadbalanceController {
         return infoService.port();
     }
 
+    /**
+     * 模拟open feign调用超时重试
+     */
     @GetMapping("/retry")
     public Integer retry() {
         return infoService.retry();
     }
 
+    /**
+     * 模拟open feign调用接口异常时降级
+     */
     @GetMapping("/tryFallback")
     public String tryFallback(boolean hasExp) {
         return infoService.mockExp(hasExp);
