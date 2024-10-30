@@ -29,14 +29,15 @@ spring:
       discovery:
         server-addr: 127.0.0.1:8848
 
-feign:
-  client:
-    config:
-      nacos-service:
-        loggerLevel: basic
-        read-timeout: 1000
-  circuitbreaker:
-    enabled: true
+    # openfeign配置前缀从feign更名为spring.cloud.openfeign
+    openfeign:
+      client:
+        config:
+          nacos-service:
+            loggerLevel: basic
+            read-timeout: 1000
+      circuitbreaker:
+        enabled: true
 
 logging:
   level:
