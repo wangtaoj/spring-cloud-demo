@@ -45,11 +45,6 @@
       <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>com.alibaba.cloud</groupId>
-      <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-    </dependency>
-
     <!-- 开启bootstrap上下文 -->
     <dependency>
       <groupId>org.springframework.cloud</groupId>
