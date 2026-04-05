@@ -28,3 +28,5 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+        # 指定使用ipv4，否则还会去解析ipv6地址，有些网络环境ipv6地址获取hostname会超时
+        ip-type: IPv4
