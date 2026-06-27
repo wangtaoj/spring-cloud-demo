@@ -1,10 +1,11 @@
-package com.wangtao.nacos.config.dynamic.thread;
+package com.wangtao.nacos.config.dynamic.thread.endpoint;
 
 /**
  * @author wangtao
  * Created at 2026-04-05
  */
-public class DynamicThreadPoolProperties {
+
+public class DynamicThreadPoolSimpleInfo {
 
     /**
      * 核心线程数量
@@ -20,6 +21,11 @@ public class DynamicThreadPoolProperties {
      * 队列容量
      */
     private int queueCapacity;
+
+    /**
+     * 队列当前大小
+     */
+    private int queueSize;
 
     public int getCorePoolSize() {
         return corePoolSize;
@@ -43,5 +49,13 @@ public class DynamicThreadPoolProperties {
 
     public void setQueueCapacity(int queueCapacity) {
         this.queueCapacity = queueCapacity;
+    }
+
+    public int getQueueSize() {
+        return queueSize;
+    }
+
+    public void setQueueSize(int queueSize) {
+        this.queueSize = queueSize;
     }
 }

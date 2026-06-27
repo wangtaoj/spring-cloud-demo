@@ -42,3 +42,9 @@ spring:
 logging:
   level:
     com.wangtao: debug
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,dynamicThreadPoolFullInfo,dynamicThreadPoolSimpleInfo
