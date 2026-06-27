@@ -16,6 +16,10 @@ import java.util.function.Consumer;
 
 /**
  * 复制于JDK8的LinkedBlockingQueue
+ * 改动的点:
+ * 1. capacity变量去掉final修饰, 并且增加volatile修饰
+ * 2. put、offer操作判断队列是否已满的条件从count.get() = capacity改成count.get() >= capacity
+ * 3. 增加capacity的getter以及setter方法, setter方法若是扩容还会唤醒因队列已满而阻塞的线程
  * @author wangtao
  * Created at 2026-06-27
  */
@@ -76,7 +80,7 @@ public class ResizeableLinkedBlockingQueue<E> extends AbstractQueue<E>
     }
 
     /** The capacity bound, or Integer.MAX_VALUE if none */
-    private final int capacity;
+    private volatile int capacity;
 
     /** Current number of elements */
     private final AtomicInteger count = new AtomicInteger();
@@ -224,7 +228,7 @@ public class ResizeableLinkedBlockingQueue<E> extends AbstractQueue<E>
             for (E e : c) {
                 if (e == null)
                     throw new NullPointerException();
-                if (n == capacity)
+                if (n >= capacity)
                     throw new IllegalStateException("Queue full");
                 enqueue(new Node<E>(e));
                 ++n;
@@ -233,6 +237,22 @@ public class ResizeableLinkedBlockingQueue<E> extends AbstractQueue<E>
         } finally {
             putLock.unlock();
         }
+    }
+
+    public void setCapacity(int capacity) {
+        if (capacity <= 0) {
+            throw new IllegalArgumentException("capacity must be greater than 0");
+        }
+        int preCapacity = this.capacity;
+        this.capacity = capacity;
+        // 扩容了, 唤醒因队列满了导致阻塞的线程
+        if (capacity > preCapacity) {
+            signalNotFull();
+        }
+    }
+
+    public int getCapacity() {
+        return capacity;
     }
 
     // this doc comment is overridden to remove the reference to collections
@@ -288,7 +308,7 @@ public class ResizeableLinkedBlockingQueue<E> extends AbstractQueue<E>
              * signalled if it ever changes from capacity. Similarly
              * for all other uses of count in other wait guards.
              */
-            while (count.get() == capacity) {
+            while (count.get() >= capacity) {
                 notFull.await();
             }
             enqueue(node);
@@ -321,7 +341,7 @@ public class ResizeableLinkedBlockingQueue<E> extends AbstractQueue<E>
         final AtomicInteger count = this.count;
         putLock.lockInterruptibly();
         try {
-            while (count.get() == capacity) {
+            while (count.get() >= capacity) {
                 if (nanos <= 0)
                     return false;
                 nanos = notFull.awaitNanos(nanos);
