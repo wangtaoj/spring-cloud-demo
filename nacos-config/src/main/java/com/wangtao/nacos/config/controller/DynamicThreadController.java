@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 public class DynamicThreadController {
 
-    @Qualifier("dynamicThreadPool")
+    @Qualifier("logDynamicThreadPool")
     @Autowired
     private ThreadPoolExecutor executor;
 
