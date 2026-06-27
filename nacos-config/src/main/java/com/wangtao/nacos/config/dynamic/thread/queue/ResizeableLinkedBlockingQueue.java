@@ -18,8 +18,10 @@ import java.util.function.Consumer;
  * 复制于JDK8的LinkedBlockingQueue
  * 改动的点:
  * 1. capacity变量去掉final修饰, 并且增加volatile修饰
- * 2. put、offer操作判断队列是否已满的条件从count.get() = capacity改成count.get() >= capacity
+ * 2. 添加操作判断队列是否已满的条件从count.get() = capacity改成count.get() >= capacity
+ *    涉及put(E e)、offer(E e, long timeout, TimeUnit unit)、offer(E e)这3个方法
  * 3. 增加capacity的getter以及setter方法, setter方法若是扩容还会唤醒因队列已满而阻塞的线程
+ * 4. 缩容不会移除多余的任务
  * @author wangtao
  * Created at 2026-06-27
  */
@@ -372,7 +374,7 @@ public class ResizeableLinkedBlockingQueue<E> extends AbstractQueue<E>
     public boolean offer(E e) {
         if (e == null) throw new NullPointerException();
         final AtomicInteger count = this.count;
-        if (count.get() == capacity)
+        if (count.get() >= capacity)
             return false;
         int c = -1;
         Node<E> node = new Node<E>(e);

@@ -10,12 +10,15 @@ import org.springframework.core.env.Environment;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
+ * 只允许动态修改corePoolSize、maximumPoolSize、queueCapacity
  * @author wangtao
  * Created at 2026-06-27
  */
@@ -62,11 +65,14 @@ public class DynamicThreadPoolFactoryBean implements FactoryBean<ThreadPoolExecu
         return executor;
     }
 
-    public void adjustThreadPool() {
+    public synchronized void adjustThreadPool() {
         DynamicThreadPoolProperties properties = bindProperties();
+        ThreadPoolExecutor executor = getObject();
         BlockingQueue<Runnable> workQueue = executor.getQueue();
+        ResizeableLinkedBlockingQueue<Runnable> resizeableLinkedBlockingQueue = null;
         if (workQueue instanceof ResizeableLinkedBlockingQueue) {
-            ((ResizeableLinkedBlockingQueue<Runnable>) workQueue).setCapacity(properties.getQueueCapacity());
+            resizeableLinkedBlockingQueue = (ResizeableLinkedBlockingQueue<Runnable>) workQueue;
+            resizeableLinkedBlockingQueue.setCapacity(properties.getQueueCapacity());
         }
         // 缩小, 先设置corePoolSize, 避免新的maximumPoolSize比当前的corePoolSize还要小, 从而报错
         if (properties.getMaximumPoolSize() < executor.getMaximumPoolSize()) {
@@ -82,7 +88,13 @@ public class DynamicThreadPoolFactoryBean implements FactoryBean<ThreadPoolExecu
                 executor.setCorePoolSize(properties.getCorePoolSize());
             }
         }
-        log.info("调整后的参数, corePoolSize: {}, maximumPoolSize: {}", executor.getCorePoolSize(), executor.getMaximumPoolSize());
+        if (resizeableLinkedBlockingQueue != null) {
+            log.info("调整后的参数, corePoolSize: {}, maximumPoolSize: {}, queueCapacity: {}",
+                executor.getCorePoolSize(), executor.getMaximumPoolSize(),
+                resizeableLinkedBlockingQueue.getCapacity());
+        } else {
+            log.info("调整后的参数, corePoolSize: {}, maximumPoolSize: {}", executor.getCorePoolSize(), executor.getMaximumPoolSize());
+        }
     }
 
     private ThreadPoolExecutor createExecutor() {
@@ -95,7 +107,7 @@ public class DynamicThreadPoolFactoryBean implements FactoryBean<ThreadPoolExecu
         Assert.isTrue(properties != null, "DynamicThreadPoolProperties can not be null");
         Assert.isTrue(properties.getCorePoolSize() >= 0, "corePoolSize can not be negative");
         Assert.isTrue(properties.getMaximumPoolSize() > 0, "maximumPoolSize must be greater than 0");
-        Assert.isTrue(properties.getQueueCapacity() >= 0, "queueCapacity can not be negative");
+        Assert.isTrue(properties.getQueueCapacity() > 0, "queueCapacity must be greater than 0");
         Assert.isTrue(properties.getCorePoolSize() <= properties.getMaximumPoolSize(), "corePoolSize must be less than or equals maximumPoolSize");
         return properties;
     }
@@ -106,9 +118,18 @@ public class DynamicThreadPoolFactoryBean implements FactoryBean<ThreadPoolExecu
     }
 
     @Override
-    public void destroy() {
+    public void destroy() throws Exception {
+        NAME_MAP.remove(dynamicThreadPoolName);
         if (executor != null) {
             executor.shutdown();
+            boolean termination = executor.awaitTermination(builder.getAwaitTerminationTime().toNanos(), TimeUnit.NANOSECONDS);
+            if (!termination) {
+                List<Runnable> runnables = executor.shutdownNow();
+                termination = executor.awaitTermination(builder.getShutdownNowAwaitTime().toNanos(), TimeUnit.NANOSECONDS);
+                if (!termination || !runnables.isEmpty()) {
+                    log.warn("[{}]线程池超时未终止，丢弃的任务数: {}", dynamicThreadPoolName, runnables.size());
+                }
+            }
         }
     }
 
