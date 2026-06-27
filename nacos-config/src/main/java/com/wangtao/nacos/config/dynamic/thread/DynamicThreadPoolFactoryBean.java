@@ -65,7 +65,7 @@ public class DynamicThreadPoolFactoryBean implements FactoryBean<ThreadPoolExecu
     public void adjustThreadPool() {
         DynamicThreadPoolProperties properties = bindProperties();
         BlockingQueue<Runnable> workQueue = executor.getQueue();
-        if (workQueue instanceof ResizeableLinkedBlockingQueue<Runnable>) {
+        if (workQueue instanceof ResizeableLinkedBlockingQueue) {
             ((ResizeableLinkedBlockingQueue<Runnable>) workQueue).setCapacity(properties.getQueueCapacity());
         }
         // 缩小, 先设置corePoolSize, 避免新的maximumPoolSize比当前的corePoolSize还要小, 从而报错

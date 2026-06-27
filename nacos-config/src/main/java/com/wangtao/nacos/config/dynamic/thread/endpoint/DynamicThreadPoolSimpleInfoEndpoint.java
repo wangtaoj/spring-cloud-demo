@@ -35,7 +35,7 @@ public class DynamicThreadPoolSimpleInfoEndpoint {
             dynamicThreadPoolSimpleInfo.setMaximumPoolSize(executor.getMaximumPoolSize());
             dynamicThreadPoolSimpleInfo.setQueueSize(executor.getQueue().size());
             BlockingQueue<Runnable> workQueue = executor.getQueue();
-            if (workQueue instanceof ResizeableLinkedBlockingQueue<Runnable>) {
+            if (workQueue instanceof ResizeableLinkedBlockingQueue) {
                 dynamicThreadPoolSimpleInfo.setQueueCapacity(((ResizeableLinkedBlockingQueue<Runnable>) workQueue).getCapacity());
             }
             infoMap.put(dynamicThreadPoolFactoryBean.getDynamicThreadPoolName(), dynamicThreadPoolSimpleInfo);

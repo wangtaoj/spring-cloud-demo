@@ -39,7 +39,7 @@ public class DynamicThreadPoolFullInfoEndpoint {
             dynamicThreadPoolFullInfo.setCompletedTaskCount(executor.getCompletedTaskCount());
             dynamicThreadPoolFullInfo.setQueueSize(executor.getQueue().size());
             BlockingQueue<Runnable> workQueue = executor.getQueue();
-            if (workQueue instanceof ResizeableLinkedBlockingQueue<Runnable>) {
+            if (workQueue instanceof ResizeableLinkedBlockingQueue) {
                 dynamicThreadPoolFullInfo.setQueueCapacity(((ResizeableLinkedBlockingQueue<Runnable>) workQueue).getCapacity());
             }
             infoMap.put(dynamicThreadPoolFactoryBean.getDynamicThreadPoolName(), dynamicThreadPoolFullInfo);
