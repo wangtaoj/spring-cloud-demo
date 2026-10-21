@@ -1,5 +1,6 @@
 package com.wangtao.nacos.consumer;
 
+import com.wangtao.nacos.consumer.config.FeignDefultConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -9,7 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @author wangtao
  * Created at 2023/6/10 15:29
  */
-@EnableFeignClients
+@EnableFeignClients(defaultConfiguration = FeignDefultConfig.class)
 @EnableDiscoveryClient
 @SpringBootApplication
 public class NacosConsumerApplication {
