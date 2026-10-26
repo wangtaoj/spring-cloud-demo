@@ -1,6 +1,7 @@
 package com.wangtao.nacos.consumer.feign.fallback;
 
 import com.wangtao.nacos.consumer.feign.InfoServiceClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
@@ -9,8 +10,9 @@ import org.springframework.stereotype.Component;
  * @author wangtao
  * Created at 2023/6/17 10:42
  */
+@Slf4j
 @Component
-public class InfoServiceFallback implements InfoServiceClient {
+public class InfoServiceClientFallback implements InfoServiceClient {
 
     @Override
     public Integer port() {
@@ -19,6 +21,7 @@ public class InfoServiceFallback implements InfoServiceClient {
 
     @Override
     public Integer retry() {
+        log.info("=============retrying=============");
         return null;
     }
 
