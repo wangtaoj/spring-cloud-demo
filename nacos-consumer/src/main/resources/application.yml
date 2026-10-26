@@ -40,6 +40,10 @@ spring:
             read-timeout: 1000
       circuitbreaker:
         enabled: true
+        alphanumeric-ids:
+          enabled: false
+        group:
+          enabled: true
 
 resilience4j:
   timelimiter:
