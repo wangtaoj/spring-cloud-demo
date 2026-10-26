@@ -41,6 +41,14 @@ spring:
       circuitbreaker:
         enabled: true
 
+resilience4j:
+  timelimiter:
+    instances:
+      # 默认是1秒, 需要延长, 否则测试open feign重试功能时, 会先熔断降级了, 看不到重试现象
+      # 当绑定到map中时, key包含特殊字符需要使用[]包裹, 否则特殊字符会被移除
+      "[InfoServiceClient#retry()]":
+        timeout-duration: 10s
+
 logging:
   level:
     com.wangtao: debug
